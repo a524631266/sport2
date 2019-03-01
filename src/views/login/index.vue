@@ -23,6 +23,18 @@
           <svg-icon :name="pwdType === 'password' ? 'eye-off' : 'eye-on'" />
         </span>
       </el-form-item>
+      <el-form-item class="row">
+        <el-input
+          type="text"
+          v-model="loginForm.code"
+          name="code"
+          auto-complete="on"
+          placeholder="验证码"
+          @keyup.enter.native="handleLogin"
+          style="width:65%;"
+           />
+        <img :src="volidateimg" alt="验证码" style="width:35%;height:52px;" @click.prevent="reloadingVolidateCode" >
+      </el-form-item>
       <el-form-item>
         <el-button :loading="loading" type="primary" style="width:100%;" @click.native.prevent="handleLogin">
           Sign in
@@ -43,6 +55,12 @@ import { UserModule } from '@/store/modules/user';
 import { Route } from 'vue-router';
 import { ElForm } from 'element-ui/types/form';
 
+const validateurl = `${process.env.BASE_URL}/backend/login/pic/1.jpg`;
+// if (!window.location.href.includes('index.html')) {
+//   validateurl = process.env.BASE_URL + validateurl;
+// }
+// tslint:disable-next-line:no-console
+console.log('process.env.BASE_UR', process.env.BASE_URL);
 const validateUsername = (rule: any, value: string, callback: any) => {
   if (!isValidUsername(value)) {
     callback(new Error('请输入正确的用户名'));
@@ -63,7 +81,9 @@ export default class Login extends Vue {
   private loginForm = {
     username: 'admin',
     password: 'admin',
+    code: '',
   };
+  private volidateimg = validateurl;
   private loginRules = {
     username: [{ required: true, trigger: 'blur', validator: validateUsername }],
     password: [{ required: true, trigger: 'blur', validator: validatePass }],
@@ -91,7 +111,9 @@ export default class Login extends Vue {
     (this.$refs.loginForm as ElForm).validate((valid: boolean) => {
       if (valid) {
         this.loading = true;
-        UserModule.Login(this.loginForm).then(() => {
+        UserModule.Login(this.loginForm).then((data) => {
+          // tslint:disable-next-line:no-console
+          console.log('loginform', data);
           this.loading = false;
           this.$router.push({ path: this.redirect || '/' });
         }).catch(() => {
@@ -101,6 +123,10 @@ export default class Login extends Vue {
         return false;
       }
     });
+  }
+  private reloadingVolidateCode() {
+      this.volidateimg = validateurl + '?' + new Date().getTime();
+      this.loginForm.code = '';
   }
 }
 </script>
@@ -155,6 +181,10 @@ export default class Login extends Vue {
     background: rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     color: #454545;
+    // & div {
+    //   display: flex;
+    //   flex-wrap: nowrap;
+    // }
   }
 
   .tips {

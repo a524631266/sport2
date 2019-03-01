@@ -13,14 +13,17 @@ const whiteList = ['/login'];
 router.beforeEach((to: Route, from: Route, next: any) => {
   NProgress.start();
   if (getToken()) {
+    // tslint:disable-next-line:no-console
+    console.log('to:::::', to, 'from', from);
     if (to.path === '/login') {
       next({ path: '/' });
       NProgress.done(); // If current page is dashboard will not trigger afterEach hook, so manually handle it
     } else {
       if (UserModule.roles.length === 0) {
+        // 在用户登录的时候获取info信息
         UserModule.GetInfo().then(() => {
           next();
-        }).catch((err) => {
+        }).catch((err: any) => {
           UserModule.FedLogOut().then(() => {
             Message.error(err || 'Verification failed, please login again');
             next({ path: '/' });

@@ -1,20 +1,24 @@
 import request from '@/utils/request';
-
-export const login = (username: string, password: string) =>
+import qs from 'qs';
+export const login = (username: string, password: string, code: string) =>
   request({
-    url: '/user/login',
+    url: '/backend/login',
     method: 'post',
-    data: {
-      username,
-      password,
-    },
+    data: qs.stringify({
+      u: username,
+      p: password,
+      code,
+    }),
   });
 
-export const getInfo = (token: string) =>
+export const getInfo = (token: string, level: string) =>
   request({
     url: '/user/info',
     method: 'get',
-    params: { token },
+    params: {
+      level,
+      token,
+    },
   });
 
 export const logout = () =>

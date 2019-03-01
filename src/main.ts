@@ -5,6 +5,7 @@ import ElementUI from 'element-ui';
 import SvgIcon from 'vue-svgicon';
 import '@/styles/index.scss';
 import '@/icons/components';
+// 注入路由拦截
 import '@/permission';
 
 /**

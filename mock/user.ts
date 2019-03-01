@@ -3,20 +3,34 @@ import { param2Obj } from './utils';
 const tokens: { [index: string]: any } = {
   admin: {
     token: 'admin-token',
+    level: 1,
   },
   editor: {
     token: 'editor-token',
+    level: 2,
   },
 };
 
 const users: { [index: string]: any } = {
-  'admin-token': {
+  // 'admin-token': {
+  //   roles: ['admin'],
+  //   introduction: 'I am a super administrator',
+  //   avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+  //   name: 'Super Admin',
+  // },
+  // 'editor-token': {
+  //   roles: ['editor'],
+  //   introduction: 'I am an editor',
+  //   avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+  //   name: 'Normal Editor',
+  // },
+  1: {
     roles: ['admin'],
     introduction: 'I am a super administrator',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
     name: 'Super Admin',
   },
-  'editor-token': {
+  2: {
     roles: ['editor'],
     introduction: 'I am an editor',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
@@ -26,9 +40,10 @@ const users: { [index: string]: any } = {
 
 export default {
   login: (res: any) => {
-    const { username } = JSON.parse(res.body);
-    const data = tokens[username];
-
+    // tslint:disable-next-line:no-console
+    console.log('mock login', res);
+    const { u } = JSON.parse(res.body);
+    const data = tokens[u];
     if (data) {
       return {
         code: 20000,
@@ -43,8 +58,10 @@ export default {
   },
 
   getInfo: (res: any) => {
-    const { token } = param2Obj(res.url);
-    const info = users[token];
+    // tslint:disable-next-line:no-console
+    console.log('mock login', res);
+    const { level } = param2Obj(res.url);
+    const info = users[level];
 
     if (info) {
       return {
@@ -60,6 +77,8 @@ export default {
   },
 
   logout: () => {
+    // tslint:disable-next-line:no-console
+    console.log('mock logout');
     return {
       code: 20000,
       data: 'success',

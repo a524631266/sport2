@@ -1,6 +1,6 @@
 import { VuexModule, Module, MutationAction, Mutation, Action, getModule } from 'vuex-module-decorators';
 import { login, logout, getInfo } from '@/api/login';
-import { getToken, setToken, removeToken } from '@/utils/auth';
+import { getToken, setToken, removeToken, getTokenByKey } from '@/utils/auth';
 import store from '@/store';
 
 export interface IUserState {
@@ -18,11 +18,17 @@ class User extends VuexModule implements IUserState {
   public roles = [];
 
   @Action({ commit: 'SET_TOKEN' })
-  public async Login(userInfo: { username: string, password: string}) {
+  public async Login(userInfo: { username: string, password: string, code: string}) {
     const username = userInfo.username.trim();
-    const { data } = await login(username, userInfo.password);
-    setToken(data.token);
-    return data.token;
+    const p = await login(username, userInfo.password, userInfo.code);
+    const { token, rid, level, aid } = p as any;
+    // tslint:disable-next-line:no-console
+    console.log(' result data', token , rid, level, aid);
+    setToken('token', token);
+    setToken('rid', rid);
+    setToken('level', level);
+    setToken('aid', aid);
+    return token;
   }
 
   @Action({ commit: 'SET_TOKEN' })
@@ -33,11 +39,15 @@ class User extends VuexModule implements IUserState {
 
   @MutationAction({ mutate: [ 'roles', 'name', 'avatar' ] })
   public async GetInfo() {
-    const token = getToken();
-    if (token === undefined) {
+    // const level = getToken();
+    const level = getTokenByKey('level');
+    const token = getTokenByKey('token');
+    if (level === undefined || token === undefined) {
       throw Error('GetInfo: token is undefined!');
     }
-    const { data } = await getInfo(token);
+    const { data } = await getInfo(token, level);
+    // tslint:disable-next-line:no-console
+    console.log('user info', data);
     if (data.roles && data.roles.length > 0) {
       return {
         roles: data.roles,

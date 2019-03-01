@@ -2,10 +2,12 @@ import axios from 'axios';
 import { Message, MessageBox } from 'element-ui';
 import { getToken } from '@/utils/auth';
 import { UserModule } from '@/store/modules/user';
-
+// tslint:disable-next-line:no-console
+console.log('BASEURL', process.env);
 const service = axios.create({
-  baseURL: process.env.VUE_APP_MOCK_API,
-  timeout: 5000,
+  // baseURL: process.env.VUE_APP_MOCK_API,
+  baseURL: process.env.BASE_URL,
+  timeout: 1000 * 60,
 });
 
 // Request interceptors
@@ -33,31 +35,33 @@ service.interceptors.response.use(
     // code == 60204: account or password is incorrect
     // You can change this part for your own usage.
     const res = response.data;
-    if (res.code !== 20000) {
-      Message({
-        message: res.message,
-        type: 'error',
-        duration: 5 * 1000,
-      });
-      if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
-        MessageBox.confirm(
-          '你已被登出，可以取消继续留在该页面，或者重新登录',
-          '确定登出',
-          {
-            confirmButtonText: '重新登录',
-            cancelButtonText: '取消',
-            type: 'warning',
-          },
-        ).then(() => {
-          UserModule.FedLogOut().then(() => {
-            location.reload();  // To prevent bugs from vue-router
-          });
-        });
-      }
-      return Promise.reject('error with code: ' + res.code);
-    } else {
-      return response.data;
-    }
+    // tslint:disable-next-line:no-console
+    console.log('s', res);
+    // if (res.code !== 20000) {
+    //   Message({
+    //     message: res.message,
+    //     type: 'error',
+    //     duration: 5 * 1000,
+    //   });
+    //   if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
+    //     MessageBox.confirm(
+    //       '你已被登出，可以取消继续留在该页面，或者重新登录',
+    //       '确定登出',
+    //       {
+    //         confirmButtonText: '重新登录',
+    //         cancelButtonText: '取消',
+    //         type: 'warning',
+    //       },
+    //     ).then(() => {
+    //       UserModule.FedLogOut().then(() => {
+    //         location.reload();  // To prevent bugs from vue-router
+    //       });
+    //     });
+    //   }
+    //   return Promise.reject('error with code: ' + res.code);
+    // } else {
+    return response.data;
+    // }
   },
   (error) => {
     Message({
