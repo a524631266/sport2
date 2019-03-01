@@ -10,13 +10,15 @@ module.exports = {
   devServer: {
     proxy: {
         '/sportbean': {
-            target: 'http://localhost:9090/sportbean2',
+            // target: 'http://localhost:9090/sportbean2',
+            target: 'http://www.qutiyu.net:9090/sportbean2',
             secure: false,
             changeOrigin: true,
             pathRewrite: {
                 '^/sportbean': ''
                 }
             }
-        }
+        },
+        disableHostCheck: true
     }
 }
